@@ -37,8 +37,12 @@ defmodule Mem.Proxy do
 
   def expire(names, hash, key, ttl)
   when is_nil(ttl) or is_integer(ttl) do
-    take_worker(names, hash) |> GenServer.call({:expire, names, key, ttl})
-    :ok
+    case get(names, hash, key) do
+      nil -> nil
+      _   ->
+        take_worker(names, hash) |> GenServer.call({:expire, names, key, ttl})
+        :ok
+    end
   end
 
   def del(names, hash, key) do
