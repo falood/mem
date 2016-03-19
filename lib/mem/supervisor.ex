@@ -2,8 +2,9 @@ defmodule Mem.Supervisor do
   use Supervisor
 
   def start_link([names, module]) do
-    :ets.new(names[:data_ets],   [:set, :public, :named_table])
-    :ets.new(names[:expiry_ets], [:set, :public, :named_table])
+    :ets.new(names[:data_ets],   [:set, :public, :named_table, write_concurrency: true])
+    :ets.new(names[:expiry_ets], [:set, :public, :named_table, write_concurrency: true])
+    :ets.new(names[:proxy_ets],  [:set, :public, :named_table, read_concurrency: true])
     Supervisor.start_link(__MODULE__, [names, module], name: names[:sup_name])
   end
 

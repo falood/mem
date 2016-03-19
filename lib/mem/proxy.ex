@@ -3,8 +3,7 @@ defmodule Mem.Proxy do
 
   def get(names, hash, key) do
     ( with {:ok, ttl} <- lookup(names[:expiry_ets], key),
-           {i, j, k} = :erlang.timestamp,
-           now = i * 1_000_000_000_000 + j * 1_000_000 + k,
+           now = Mem.Utils.now,
            true <- now > ttl,
       do: :expire
     ) |> case do
@@ -17,8 +16,7 @@ defmodule Mem.Proxy do
   end
 
   def ttl(names, hash, key) do
-    {i, j, k} = :erlang.timestamp
-    now = i * 1_000_000_000_000 + j * 1_000_000 + k
+    now = Mem.Utils.now
     ttl = lookup(names[:expiry_ets], key) |> elem(1)
     cond do
       is_nil(ttl) ->
@@ -28,13 +26,6 @@ defmodule Mem.Proxy do
         nil
       true        ->
         ttl - now
-    end
-  end
-
-  defp lookup(tab, key) do
-    case :ets.lookup(tab, key) do
-      [{^key, value}] -> {:ok, value}
-      []              -> {:err, nil}
     end
   end
 
@@ -55,35 +46,45 @@ defmodule Mem.Proxy do
     :ok
   end
 
-  defp take_worker(names, hash) do
-    GenServer.call(names[:proxy_name], {:take_workers, hash})
-  end
-
   def start_link(names) do
     GenServer.start_link(__MODULE__, names, name: names[:proxy_name])
   end
 
   def init(names) do
-    state =
-      %{ workers: %{},
-         names: names,
-       }
-    {:ok, state}
+    {:ok, names}
   end
 
-  def handle_call({:take_workers, hash}, _from,
-    %{workers: workers, names: names} = state
-  ) do
-    pid =
-      ( with pid when is_pid(pid) <- workers[hash],
-             true <- Process.alive?(pid),
-        do: {:ok, pid}
-      ) |> case do
-        {:ok, pid} -> pid
-        _          -> create_worker(names[:worker_sup_name])
+  def handle_call({:create_worker, hash}, _from, names) do
+    result =
+      case try_take_worker(names, hash) do
+        nil ->
+          pid = create_worker(names[:worker_sup_name])
+          :ets.insert(names[:proxy_ets], {hash, pid})
+          pid
+        pid -> pid
       end
-    workers = put_in(workers, [hash], pid)
-    {:reply, pid, %{state | workers: workers}}
+    {:reply, result, names}
+  end
+
+  defp take_worker(names, hash) do
+    try_take_worker(names, hash) || GenServer.call(names[:proxy_name], {:create_worker, hash})
+  end
+
+  defp try_take_worker(names, hash) do
+    ( with {:ok, pid} when is_pid(pid) <- lookup(names[:proxy_ets], hash),
+           true <- Process.alive?(pid),
+      do: {:take, pid}
+    ) |> case do
+      {:take, pid} -> pid
+       _           -> nil
+    end
+  end
+
+  defp lookup(tab, key) do
+    case :ets.lookup(tab, key) do
+      [{^key, value}] -> {:ok, value}
+      []              -> {:err, nil}
+    end
   end
 
   defp create_worker(name) do

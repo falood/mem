@@ -32,8 +32,7 @@ defmodule Mem.Worker do
   end
 
   defp expire(tab, key, ttl) when is_integer(ttl) do
-    {i, j, k} = :erlang.timestamp
-    ttl = i * 1_000_000_000_000 + j * 1_000_000 + k + ttl
+    ttl = Mem.Utils.now + ttl
     insert(tab, key, ttl)
   end
 

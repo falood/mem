@@ -1,13 +1,12 @@
 defmodule Mem do
-  use Application
-
   defmacro __using__(opts) do
-    worker_number = opts |> Keyword.get(:worker_number, 1)
+    worker_number = opts |> Keyword.get(:worker_number, 2)
     quote do
       "Elixir." <> name = __MODULE__ |> to_string
       @names %{
         data_ets:        :"Mem.Data.#{name}",
         expiry_ets:      :"Mem.Expiry.#{name}",
+        proxy_ets:       :"Mem.Proxy.#{name}",
         sup_name:        :"Mem.#{name}",
         proxy_name:      :"Mem.#{name}.Proxy",
         cleaner_name:    :"Mem.#{name}.Cleaner",
