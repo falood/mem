@@ -8,7 +8,7 @@ defmodule Mem.Proxy do
       do: :expire
     ) |> case do
       :expire ->
-        take_worker(names, hash) |> GenServer.cast({:delete, names, key})
+        take_worker(names, hash) |> GenServer.call({:delete, names, key})
         nil
       _       ->
         lookup(names[:data_ets], key) |> elem(1)
@@ -22,7 +22,7 @@ defmodule Mem.Proxy do
       is_nil(ttl) ->
         nil
       now > ttl   ->
-        take_worker(names, hash) |> GenServer.cast({:delete, names, key})
+        take_worker(names, hash) |> GenServer.call({:delete, names, key})
         nil
       true        ->
         ttl - now
@@ -31,18 +31,18 @@ defmodule Mem.Proxy do
 
   def set(names, hash, key, value, ttl)
   when is_nil(ttl) or is_integer(ttl) do
-    take_worker(names, hash) |> GenServer.cast({:insert, names, key, value, ttl})
+    take_worker(names, hash) |> GenServer.call({:insert, names, key, value, ttl})
     :ok
   end
 
   def expire(names, hash, key, ttl)
   when is_nil(ttl) or is_integer(ttl) do
-    take_worker(names, hash) |> GenServer.cast({:expire, names, key, ttl})
+    take_worker(names, hash) |> GenServer.call({:expire, names, key, ttl})
     :ok
   end
 
   def del(names, hash, key) do
-    take_worker(names, hash) |> GenServer.cast({:delete, names, key})
+    take_worker(names, hash) |> GenServer.call({:delete, names, key})
     :ok
   end
 

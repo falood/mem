@@ -9,21 +9,21 @@ defmodule Mem.Worker do
     {:ok, nil}
   end
 
-  def handle_cast({:insert, names, key, value, ttl}, state) do
+  def handle_call({:insert, names, key, value, ttl}, _from, state) do
     expire(names[:expiry_ets], key, ttl)
     insert(names[:data_ets], key, value)
-    {:noreply, state}
+    {:reply, :ok, state}
   end
 
-  def handle_cast({:expire, names, key, ttl}, state) do
+  def handle_call({:expire, names, key, ttl}, _from, state) do
     expire(names[:expiry_ets], key, ttl)
-    {:noreply, state}
+    {:reply, :ok, state}
   end
 
-  def handle_cast({:delete, names, key}, state) do
+  def handle_call({:delete, names, key}, _from, state) do
     delete(names[:expiry_ets], key)
     delete(names[:data_ets], key)
-    {:noreply, state}
+    {:reply, :ok, state}
   end
 
 
