@@ -42,4 +42,4 @@ This project is under development, do **NOT** use it on production.
 
 ## TODO
 - [ ] Unittest
-- [ ] Benchmark
+- [X] Benchmark

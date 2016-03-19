@@ -16,6 +16,6 @@ defmodule Mem.Mixfile do
   end
 
   defp deps do
-    []
+    [ {:benchfella, "~> 0.3", only: :bench} ]
   end
 end
