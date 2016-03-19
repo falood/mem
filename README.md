@@ -39,7 +39,3 @@ This project is under development, do **NOT** use it on production.
     Cache.ttl(:a)
     Cache.del(:b)
     ```
-
-## TODO
-- [ ] Unittest
-- [X] Benchmark
