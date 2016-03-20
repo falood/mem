@@ -1,8 +1,8 @@
-defmodule Mem.Cleaner do
+defmodule Mem.TTLCleaner do
   use GenServer
 
   def start_link(names, module) do
-    GenServer.start_link(__MODULE__, [names, module], name: names[:cleaner_name])
+    GenServer.start_link(__MODULE__, [names, module], name: names[:ttl_cleaner_name])
   end
 
   def init([names, module]) do
@@ -33,12 +33,12 @@ defmodule Mem.Cleaner do
   end
 
   defp do_clean(names, _, :"$end_of_table") do
-    :ets.first(names[:expiry_ets])
+    :ets.first(names[:ttl_ets])
   end
 
   defp do_clean(names, module, key) do
     module.ttl(key)
-    :ets.next(names[:expiry_ets], key)
+    :ets.next(names[:ttl_ets], key)
   end
 
 end

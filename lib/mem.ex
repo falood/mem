@@ -4,13 +4,13 @@ defmodule Mem do
     quote do
       "Elixir." <> name = __MODULE__ |> to_string
       @names %{
-        data_ets:        :"Mem.Data.#{name}",
-        expiry_ets:      :"Mem.Expiry.#{name}",
-        proxy_ets:       :"Mem.Proxy.#{name}",
-        sup_name:        :"Mem.#{name}",
-        proxy_name:      :"Mem.#{name}.Proxy",
-        cleaner_name:    :"Mem.#{name}.Cleaner",
-        worker_sup_name: :"Mem.#{name}.Supervisor",
+        proxy_ets:        :"Mem.Proxy.#{name}",
+        data_ets:         :"Mem.Data.#{name}",
+        ttl_ets:          :"Mem.TTL.#{name}",
+        sup_name:         :"Mem.#{name}",
+        proxy_name:       :"Mem.#{name}.Proxy",
+        ttl_cleaner_name: :"Mem.#{name}.TTLCleaner",
+        worker_sup_name:  :"Mem.#{name}.Supervisor",
       }
       @worker_number unquote(worker_number)
 

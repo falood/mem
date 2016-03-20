@@ -2,7 +2,7 @@ defmodule Mem.Proxy do
   use GenServer
 
   def get(names, hash, key) do
-    ( with {:ok, ttl} <- lookup(names[:expiry_ets], key),
+    ( with {:ok, ttl} <- lookup(names[:ttl_ets], key),
            now = Mem.Utils.now,
            true <- now > ttl,
       do: :expire
@@ -17,7 +17,7 @@ defmodule Mem.Proxy do
 
   def ttl(names, hash, key) do
     now = Mem.Utils.now
-    ttl = lookup(names[:expiry_ets], key) |> elem(1)
+    ttl = lookup(names[:ttl_ets], key) |> elem(1)
     cond do
       is_nil(ttl) ->
         nil
