@@ -2,7 +2,7 @@ defmodule Mem.TTLCleaner do
   use GenServer
 
   def start_link(names, module) do
-    GenServer.start_link(__MODULE__, [names, module], name: names[:ttl_cleaner_name])
+    GenServer.start_link(__MODULE__, [names, module], name: names.ttl_cleaner_name)
   end
 
   def init([names, module]) do
@@ -20,11 +20,11 @@ defmodule Mem.TTLCleaner do
 
   def handle_info(:clean, state) do
     ref =
-      Enum.reduce(1..state[:number], state[:ref], fn(_, acc) ->
-        do_clean(state[:names], state[:module], acc)
+      Enum.reduce(1..state.number, state.ref, fn(_, acc) ->
+        do_clean(state.names, state.module, acc)
       end)
 
-    Process.send_after(self, :clean, state[:interval])
+    Process.send_after(self, :clean, state.interval)
     {:noreply, %{state | ref: ref}}
   end
 
@@ -33,12 +33,12 @@ defmodule Mem.TTLCleaner do
   end
 
   defp do_clean(names, _, :"$end_of_table") do
-    :ets.first(names[:ttl_ets])
+    :ets.first(names.ttl_ets)
   end
 
   defp do_clean(names, module, key) do
     module.ttl(key)
-    :ets.next(names[:ttl_ets], key)
+    :ets.next(names.ttl_ets, key)
   end
 
 end

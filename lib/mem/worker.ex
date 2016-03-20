@@ -10,19 +10,19 @@ defmodule Mem.Worker do
   end
 
   def handle_call({:insert, names, key, value, ttl}, _from, state) do
-    expire(names[:ttl_ets], key, ttl)
-    insert(names[:data_ets], key, value)
+    expire(names.ttl_ets, key, ttl)
+    insert(names.data_ets, key, value)
     {:reply, :ok, state}
   end
 
   def handle_call({:expire, names, key, ttl}, _from, state) do
-    expire(names[:ttl_ets], key, ttl)
+    expire(names.ttl_ets, key, ttl)
     {:reply, :ok, state}
   end
 
   def handle_call({:delete, names, key}, _from, state) do
-    delete(names[:ttl_ets], key)
-    delete(names[:data_ets], key)
+    delete(names.ttl_ets, key)
+    delete(names.data_ets, key)
     {:reply, :ok, state}
   end
 

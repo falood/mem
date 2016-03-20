@@ -1,7 +1,13 @@
 defmodule Mem do
   defmacro __using__(opts) do
-    worker_number = opts |> Keyword.get(:worker_number, 2)
+    worker_number      = opts |> Keyword.get(:worker_number, 2)
+    maxmemory_size     = opts |> Keyword.get(:maxmemory_size, nil) |> Mem.Utils.format_space_size
+    maxmemory_strategy = opts |> Keyword.get(:maxmemory_strategy, :lru)
+    maxmemory_strategy in [:lru, :ttl, :fifo] || raise "unknown maxmemory strategy"
     quote do
+      @worker_number unquote(worker_number)
+      @mem_size      unquote(maxmemory_size)
+      @mem_strategy  unquote(maxmemory_strategy)
       "Elixir." <> name = __MODULE__ |> to_string
       @names %{
         proxy_ets:        :"Mem.Proxy.#{name}",
@@ -12,12 +18,20 @@ defmodule Mem do
         ttl_cleaner_name: :"Mem.#{name}.TTLCleaner",
         worker_sup_name:  :"Mem.#{name}.Supervisor",
       }
-      @worker_number unquote(worker_number)
+
+      unless is_nil(@mem_size) do
+        @names Map.merge(@names, %{
+          lru_ets:          :"Mem.LRU.#{name}",
+          lru_inverted_ets: :"Mem.LRU.Inverted.#{name}",
+          lru_cleaner_name: :"Mem.#{name}.LRUCleaner",
+          event_name:       :"Mem.#{name}.Event",
+        })
+      end
 
       def child_spec do
         Supervisor.Spec.supervisor(
           Mem.Supervisor,
-          [[@names, __MODULE__]],
+          [{@names, @mem_size, @mem_strategy, __MODULE__}],
           id: __MODULE__
         )
       end

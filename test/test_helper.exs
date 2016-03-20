@@ -1,5 +1,8 @@
 defmodule M do
-  use Mem
+  use Mem,
+    worker_number: 5,
+    maxmemory_size: 3000,
+    maxmemory_strategy: :lru
 end
 
 defmodule M.Supervisor do

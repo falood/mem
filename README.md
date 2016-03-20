@@ -1,6 +1,6 @@
 # Mem
 
-> ETS based KV cache with ttl support
+> ETS based KV cache with TTL and LRU support
 
 This project is under development, do **NOT** use it on production.
 
