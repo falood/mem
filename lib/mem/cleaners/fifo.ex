@@ -1,7 +1,7 @@
 defmodule Mem.Cleaners.FIFO do
   use GenEvent
 
-  def handle_event({:set, key}, %{names: names}=state) do
+  def handle_event({:set, key, _}, %{names: names}=state) do
     Mem.Cleaners.update_lru(names, key)
     Mem.Cleaners.check_memory(names, state.mem_size, self)
     {:ok, state}

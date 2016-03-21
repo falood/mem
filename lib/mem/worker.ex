@@ -15,8 +15,8 @@ defmodule Mem.Worker do
     {:reply, :ok, state}
   end
 
-  def handle_call({:expire, names, key, ttl}, _from, state) do
-    expire(names.ttl_ets, key, ttl)
+  def handle_call({:expire, names, key, time}, _from, state) do
+    expire(names.ttl_ets, key, time)
     {:reply, :ok, state}
   end
 
@@ -31,9 +31,8 @@ defmodule Mem.Worker do
     delete(tab, key)
   end
 
-  defp expire(tab, key, ttl) when is_integer(ttl) do
-    ttl = Mem.Utils.now + ttl
-    insert(tab, key, ttl)
+  defp expire(tab, key, time) when is_integer(time) do
+    insert(tab, key, time)
   end
 
 

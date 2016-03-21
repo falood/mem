@@ -1,7 +1,7 @@
 defmodule Mem.Cleaners.TTL do
   use GenEvent
 
-  def handle_event({:expire, key}, %{names: names}=state) do
+  def handle_event({:expire, key, _}, %{names: names}=state) do
     Mem.Cleaners.update_lru(names, key)
     Mem.Cleaners.check_memory(names, state.mem_size, self)
     {:ok, state}

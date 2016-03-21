@@ -11,7 +11,7 @@ defmodule Mem.Proxy do
         do_delete(names, hash, key)
         nil
       _       ->
-        notify(names, :get, key)
+        notify(names, {:get, key})
         lookup(names.data_ets, key) |> elem(1)
     end
   end
@@ -26,18 +26,21 @@ defmodule Mem.Proxy do
         do_delete(names, hash, key)
         nil
       true        ->
-        notify(names, :ttl, key)
+        notify(names, {:ttl, key})
         ttl - now
     end
   end
 
-  def set(names, hash, key, value, ttl)
-  when is_nil(ttl) or is_integer(ttl) do
-    unless is_nil(ttl) do
-      notify(names, :expire, key)
-    end
-    do_insert(names, hash, key, value, ttl)
+  def set(names, hash, key, value, nil) do
+    notify(names, {:expire, key, nil})
+    do_insert(names, hash, key, value, nil)
     :ok
+  end
+
+  def set(names, hash, key, value, ttl) when is_integer(ttl) do
+    time = Mem.Utils.now + ttl
+    do_insert(names, hash, key, value, time)
+    notify(names, {:expire, key, time})
   end
 
   def expire(names, hash, key, ttl)
@@ -45,7 +48,8 @@ defmodule Mem.Proxy do
     case get(names, hash, key) do
       nil -> nil
       _   ->
-        do_expire(names, hash, key, ttl)
+        time = Mem.Utils.now + ttl
+        do_expire(names, hash, key, time)
         :ok
     end
   end
@@ -65,26 +69,26 @@ defmodule Mem.Proxy do
   end
 
   defp do_insert(names, hash, key, value, ttl) do
-    notify(names, :set, key)
+    notify(names, {:set, key, value})
     take_worker(names, hash)
     |> GenServer.call({:insert, names, key, value, ttl})
   end
 
-  defp do_expire(names, hash, key, ttl) do
-    notify(names, :expire, key)
+  defp do_expire(names, hash, key, time) do
+    notify(names, {:expire, key, time})
     take_worker(names, hash)
-    |> GenServer.call({:expire, names, key, ttl})
+    |> GenServer.call({:expire, names, key, time})
   end
 
   defp do_delete(names, hash, key) do
-    notify(names, :del, key)
+    notify(names, {:del, key})
     take_worker(names, hash)
     |> GenServer.call({:delete, names, key})
   end
 
-  defp notify(names, event, key) do
+  defp notify(names, event) do
     if Map.has_key?(names, :event_name) do
-      GenEvent.notify(names.event_name, {event, key})
+      GenEvent.notify(names.event_name, event)
     end
   end
 
