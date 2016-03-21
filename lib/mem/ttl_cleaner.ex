@@ -38,7 +38,11 @@ defmodule Mem.TTLCleaner do
 
   defp do_clean(names, module, key) do
     module.ttl(key)
-    :ets.next(names.ttl_ets, key)
+    try do
+      :ets.next(names.ttl_ets, key)
+    rescue
+      ArgumentError -> :ets.first(names.ttl_ets)
+    end
   end
 
 end
