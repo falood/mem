@@ -68,6 +68,24 @@ defmodule MemTest do
     M.set(:f, 1)
     assert is_nil(M.hset(:f, :a, 1))
     assert is_nil(M.hget(:f, :a))
-
   end
+
+  test "inc" do
+    assert is_nil(M.get(:g))
+    M.set(:g, 1)
+    assert :ok = M.inc(:g)
+    assert 2 = M.get(:g)
+    assert :ok = M.inc(:g, 1.1)
+    assert 3.1 == M.get(:g)
+
+    M.set(:g, 1.0)
+    assert :ok = M.inc(:g, 2)
+    assert 3.0 == M.get(:g)
+    assert :ok = M.inc(:g, 1.1)
+    assert 4.1 == M.get(:g)
+
+    M.set(:g, :x)
+    assert nil == M.inc(:g)
+  end
+
 end

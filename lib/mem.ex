@@ -85,6 +85,10 @@ defmodule Mem do
         Mem.Proxy.hset(@names, phash(key), key, field, value)
       end
 
+      def inc(key, value \\ 1) do
+        Mem.Proxy.inc(@names, phash(key), key, value)
+      end
+
       defp phash(key) do
         :erlang.phash2(key, @worker_number)
       end

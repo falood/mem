@@ -79,6 +79,21 @@ defmodule Mem.Proxy do
     do_update_field(names, hash, key, field, value)
   end
 
+  def inc(names, hash, key, value) do
+    do_inc(names, hash, key, value)
+  end
+
+  defp do_inc(names, hash, key, value) do
+    take_worker(names, hash)
+    |> GenServer.call({:increase, names, key, value})
+    |> case do
+      :err -> nil
+      :ok ->
+        notify(names, {:inc, key, value})
+        :ok
+    end
+  end
+
   defp do_update_field(names, hash, key, field, value) do
     take_worker(names, hash)
     |> GenServer.call({:update_field, names, key, field, value})

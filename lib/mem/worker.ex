@@ -41,6 +41,21 @@ defmodule Mem.Worker do
     end
   end
 
+  def handle_call({:increase, names, key, value}, _from, state) do
+    :ets.lookup(names.data_ets, key)
+    |> case do
+      [] -> 0
+      [{_, v}] -> v
+    end
+    |> case do
+      v when is_integer(v) or is_float(v) ->
+         insert(names.data_ets, key, v + value)
+         {:reply, :ok, state}
+      _                                   ->
+         {:reply, :err, state}
+    end
+  end
+
 
   defp expire(tab, key, nil) do
     delete(tab, key)

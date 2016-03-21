@@ -33,6 +33,7 @@ This project is under development, do **NOT** use it on production.
 3. just use it like redis
     ```elixir
     Cache.set(:a, 1)
+    Cache.inc(:a, 2)
     Cache.set(:b, 2, 200)
     Cache.get(:a)
     Cache.expire(:a, 200)
