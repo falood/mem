@@ -17,6 +17,14 @@ defmodule Mem.Cleaners.FIFO do
     {:ok, state}
   end
 
+  def handle_event({:hset, key, _, _}, %{names: names}=state) do
+    case :ets.lookup(names.lru_ets, key) do
+      [_] -> nil
+      []  -> Mem.Cleaners.update_lru(names, key)
+    end
+    {:ok, state}
+  end
+
   def handle_event(_, state) do
     {:ok, state}
   end

@@ -68,6 +68,28 @@ defmodule Mem.Proxy do
     :ok
   end
 
+  def hget(names, hash, key, field) do
+    case get(names, hash, key) do
+      %{}=v -> Map.get(v, field)
+      _     -> nil
+    end
+  end
+
+  def hset(names, hash, key, field, value) do
+    do_update_field(names, hash, key, field, value)
+  end
+
+  defp do_update_field(names, hash, key, field, value) do
+    take_worker(names, hash)
+    |> GenServer.call({:update_field, names, key, field, value})
+    |> case do
+      :err -> nil
+      :ok ->
+        notify(names, {:hset, key, field, value})
+        :ok
+    end
+  end
+
   defp do_insert(names, hash, key, value, ttl) do
     notify(names, {:set, key, value})
     take_worker(names, hash)

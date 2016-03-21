@@ -77,6 +77,14 @@ defmodule Mem do
         Mem.Proxy.flush(@names)
       end
 
+      def hget(key, field) do
+        Mem.Proxy.hget(@names, phash(key), key, field)
+      end
+
+      def hset(key, field, value) do
+        Mem.Proxy.hset(@names, phash(key), key, field, value)
+      end
+
       defp phash(key) do
         :erlang.phash2(key, @worker_number)
       end

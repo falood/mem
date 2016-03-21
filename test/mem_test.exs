@@ -55,4 +55,19 @@ defmodule MemTest do
     assert is_nil(M.get(:e))
   end
 
+  test "hget and hset" do
+    assert is_nil(M.get(:f))
+    assert :ok = M.hset(:f, :a, 1)
+    assert 1 = M.hget(:f, :a)
+    assert %{a: 1} = M.get(:f)
+
+    assert :ok = M.hset(:f, :b, 2)
+    assert 2 = M.hget(:f, :b)
+    assert %{a: 1, b: 2} = M.get(:f)
+
+    M.set(:f, 1)
+    assert is_nil(M.hset(:f, :a, 1))
+    assert is_nil(M.hget(:f, :a))
+
+  end
 end

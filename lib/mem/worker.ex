@@ -26,6 +26,21 @@ defmodule Mem.Worker do
     {:reply, :ok, state}
   end
 
+  def handle_call({:update_field, names, key, field, value}, _from, state) do
+    :ets.lookup(names.data_ets, key)
+    |> case do
+      [] -> %{}
+      [{_, v}] -> v
+    end
+    |> case do
+      v when is_map(v) ->
+         insert(names.data_ets, key, put_in(v, [field], value))
+         {:reply, :ok, state}
+      _                ->
+         {:reply, :err, state}
+    end
+  end
+
 
   defp expire(tab, key, nil) do
     delete(tab, key)

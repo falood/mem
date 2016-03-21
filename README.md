@@ -39,4 +39,7 @@ This project is under development, do **NOT** use it on production.
     Cache.ttl(:a)
     Cache.del(:b)
     Cache.flush
+
+    Cache.hset(:c, :a, 2)
+    Cache.hget(:c, :a)
     ```

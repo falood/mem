@@ -32,6 +32,11 @@ defmodule Mem.Cleaners.LRU do
     {:ok, state}
   end
 
+  def handle_event({:hset, key, _, _}, %{names: names}=state) do
+    Mem.Cleaners.update_lru(names, key)
+    {:ok, state}
+  end
+
   def handle_event(_, state) do
     {:ok, state}
   end
