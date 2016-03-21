@@ -32,11 +32,13 @@ defmodule Mem do
       end
 
       def child_spec do
-        Supervisor.Spec.supervisor(
-          Mem.Supervisor,
-          [{@names, @mem_size, @mem_strategy, __MODULE__}],
-          id: __MODULE__
-        )
+        args = %{
+          names:        @names,
+          mem_size:     @mem_size,
+          mem_strategy: @mem_strategy,
+          module:       __MODULE__,
+        }
+        Supervisor.Spec.supervisor(Mem.Supervisor, [args], id: __MODULE__)
       end
 
       def get(key) do
