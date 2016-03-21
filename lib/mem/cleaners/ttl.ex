@@ -12,6 +12,11 @@ defmodule Mem.Cleaners.TTL do
     {:ok, state}
   end
 
+  def handle_event(:flush, %{names: names}=state) do
+    Mem.Cleaners.flush(names)
+    {:ok, state}
+  end
+
   def handle_event(_, state) do
     {:ok, state}
   end

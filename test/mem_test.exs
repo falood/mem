@@ -47,4 +47,12 @@ defmodule MemTest do
     assert is_nil(M.get(:d))
   end
 
+  test "flush" do
+    assert is_nil(M.get(:e))
+
+    M.set(:e, 2)
+    M.flush
+    assert is_nil(M.get(:e))
+  end
+
 end

@@ -38,4 +38,5 @@ This project is under development, do **NOT** use it on production.
     Cache.expire(:a, 200)
     Cache.ttl(:a)
     Cache.del(:b)
+    Cache.flush
     ```

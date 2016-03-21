@@ -71,6 +71,10 @@ defmodule Mem do
         Mem.Proxy.del(@names, phash(key), key)
       end
 
+      def flush do
+        Mem.Proxy.flush(@names)
+      end
+
       defp phash(key) do
         :erlang.phash2(key, @worker_number)
       end

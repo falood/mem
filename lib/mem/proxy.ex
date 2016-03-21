@@ -55,6 +55,15 @@ defmodule Mem.Proxy do
     :ok
   end
 
+  def flush(names) do
+    if Map.has_key?(names, :event_name) do
+      GenEvent.notify(names.event_name, :flush)
+    end
+    :ets.delete_all_objects(names.data_ets)
+    :ets.delete_all_objects(names.ttl_ets)
+    :ok
+  end
+
   defp do_insert(names, hash, key, value, ttl) do
     notify(names, :set, key)
     take_worker(names, hash)

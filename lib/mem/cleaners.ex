@@ -20,6 +20,21 @@ defmodule Mem.Cleaners do
     end
   end
 
+  def flush(names) do
+    do_flush
+    :ets.delete_all_objects(names.lru_inverted_ets)
+    :ets.delete_all_objects(names.lru_ets)
+    :ok
+  end
+
+  defp do_flush do
+    receive do
+      _ -> do_flush
+    after
+      0 -> :ok
+    end
+  end
+
   def check_memory(names, mem_size, pid) do
     if :ets.info(names.data_ets, :memory) > mem_size do
       send(pid, :clean)
