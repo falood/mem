@@ -50,3 +50,7 @@
     Cache.hset(:c, :a, 2)
     Cache.hget(:c, :a)
     ```
+
+## Thanks
+
+* [redink](https://github.com/redink)
