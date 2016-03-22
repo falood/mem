@@ -10,7 +10,12 @@
 1. define your cache module
     ```elixir
     defmodule Cache do
-      use Mem
+      use Mem,
+        worker_number:      2,       # (optional, default: 2) how many processes in worker pool
+        default_ttl:        300,     # (optional, default: nil) default ttl for set/2
+        maxmemory_size:     "1000M", # (optional, default: nil) max memory used
+        maxmemory_strategy: :lru     # ([:lru, :ttl, :fifo]) strategy for cleaning memory
+
     end
     ```
 
