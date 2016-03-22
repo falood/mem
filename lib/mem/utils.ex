@@ -12,7 +12,7 @@ defmodule Mem.Utils do
 
   defp do_format([], result), do: result
   defp do_format([h | t], result)
-  when h in [" ", "B"] do
+  when h in [" ", "B", "b"] do
     do_format(t, result)
   end
   defp do_format([h | t], result)
