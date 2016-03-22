@@ -3,11 +3,15 @@ defmodule Mem.Mixfile do
 
   def project do
     [ app: :mem,
-      version: "0.0.1",
+      name: :Mem,
+      version: "0.1.0",
       elixir: "~> 1.2",
       build_embedded: Mix.env == :prod,
       start_permanent: Mix.env == :prod,
       deps: deps,
+      description: "ETS based KV cache with TTL and LRU support",
+      source_url: "https://github.com/falood/mem",
+      package: package,
     ]
   end
 
@@ -17,5 +21,11 @@ defmodule Mem.Mixfile do
 
   defp deps do
     [ {:benchfella, "~> 0.3", only: :bench} ]
+  end
+
+  defp package do
+    %{ licenses: ["BSD 3-Clause"],
+       links: %{"Github" => "https://github.com/falood/mem"}
+     }
   end
 end
