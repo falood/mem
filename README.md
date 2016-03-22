@@ -2,8 +2,9 @@
 
 > ETS based KV cache with TTL and LRU support
 
-This project is under development, do **NOT** use it on production.
-
+[![Build Status](https://img.shields.io/travis/falood/mem.svg?style=flat-square)](https://travis-ci.org/falood/mem)
+[![Hex.pm Version](https://img.shields.io/hexpm/v/mem.svg?style=flat-square)](https://hex.pm/packages/mem)
+[![Hex.pm Downloads](https://img.shields.io/hexpm/dt/mem.svg?style=flat-square)](https://hex.pm/packages/mem)
 ## Usage
 
 1. define your cache module
