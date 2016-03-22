@@ -1,5 +1,5 @@
 defmodule MemTest do
-  use ExUnit.Case
+  use ExUnit.Case, async: true
   doctest Mem
 
 
@@ -18,6 +18,7 @@ defmodule MemTest do
     assert is_nil(M.ttl(:b))
 
     M.set(:b, 3, 200)
+    assert 3 == M.get(:b)
     assert not is_nil(M.ttl(:b))
     assert 200 >= M.ttl(:b)
 
