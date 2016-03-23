@@ -2,7 +2,7 @@ defmodule Mem do
   defmacro __using__(opts) do
     worker_number      = opts |> Keyword.get(:worker_number, 2)
     default_ttl        = opts |> Keyword.get(:default_ttl, nil)
-    maxmemory_size     = opts |> Keyword.get(:maxmemory_size, nil) |> Mem.Utils.format_space_size
+    maxmemory_size     = opts |> Keyword.get(:maxmemory_size, nil)
     maxmemory_strategy = opts |> Keyword.get(:maxmemory_strategy, :lru)
     maxmemory_strategy in [:lru, :ttl, :fifo] || raise "unknown maxmemory strategy"
 
@@ -10,8 +10,9 @@ defmodule Mem do
       opts = Application.get_env(:mem, __MODULE__, [])
       @worker_number unquote(worker_number)      || opts[:worker_number]      || 2
       @default_ttl   unquote(default_ttl)        || opts[:default_ttl]        || nil
-      @mem_size      unquote(maxmemory_size)     || opts[:maxmemory_size]     || nil
+      @opts_mem_size unquote(maxmemory_size)     || opts[:maxmemory_size]     || nil
       @mem_strategy  unquote(maxmemory_strategy) || opts[:maxmemory_strategy] || :lru
+      @mem_size      Mem.Utils.format_space_size(@opts_mem_size)
       "Elixir." <> name = __MODULE__ |> to_string
       @names %{
         proxy_ets:        :"Mem.Proxy.#{name}",
