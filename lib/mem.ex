@@ -7,10 +7,11 @@ defmodule Mem do
     maxmemory_strategy in [:lru, :ttl, :fifo] || raise "unknown maxmemory strategy"
 
     quote do
-      @worker_number unquote(worker_number)
-      @default_ttl   unquote(default_ttl)
-      @mem_size      unquote(maxmemory_size)
-      @mem_strategy  unquote(maxmemory_strategy)
+      opts = Application.get_env(:mem, __MODULE__, [])
+      @worker_number unquote(worker_number)      || opts[:worker_number]      || 2
+      @default_ttl   unquote(default_ttl)        || opts[:default_ttl]        || nil
+      @mem_size      unquote(maxmemory_size)     || opts[:maxmemory_size]     || nil
+      @mem_strategy  unquote(maxmemory_strategy) || opts[:maxmemory_strategy] || :lru
       "Elixir." <> name = __MODULE__ |> to_string
       @names %{
         proxy_ets:        :"Mem.Proxy.#{name}",
