@@ -1,14 +1,14 @@
 defmodule Mem.Cleaners do
 
   def update_lru(names, key) do
-    now = Mem.Utils.now
+    inverted_key = {Mem.Utils.now, System.unique_integer}
     case :ets.lookup(names.lru_ets, key) do
       [] -> nil
       [{_, t}] ->
         :ets.delete(names.lru_inverted_ets, t)
     end
-    :ets.insert(names.lru_ets, {key, now})
-    :ets.insert(names.lru_inverted_ets, {now, key})
+    :ets.insert(names.lru_ets, {key, inverted_key})
+    :ets.insert(names.lru_inverted_ets, {inverted_key, key})
   end
 
   def delete_lru(names, key) do
