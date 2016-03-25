@@ -56,4 +56,9 @@ defmodule Mem.Cleaners.LRU do
     {:ok, state}
   end
 
+  def terminate(:remove_handler, _), do: :ok
+  def terminate(_, %{names: names} = state) do
+    GenEvent.add_handler(names.event_name, __MODULE__, state)
+  end
+
 end
