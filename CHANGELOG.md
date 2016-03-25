@@ -1,6 +1,6 @@
 ## Changelog
 
-## v0.1.2-dev
+## v0.1.2 (2016-03-25)
 * Bugfix
   * format maxmemory_size within config.exs
   * use unique inverted key for LRU cleaners
