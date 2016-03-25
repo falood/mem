@@ -5,6 +5,7 @@
   * format maxmemory_size within config.exs
   * use unique inverted key for LRU cleaners
   * readd handler when handler crash
+  * add ref to distinguish handlers
 
 ## v0.1.1 (2016-03-23)
 * Enhancements

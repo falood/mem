@@ -29,7 +29,7 @@ defmodule Mem.Cleaners.FIFO do
     {:ok, state}
   end
 
-  def handle_info(:clean, %{names: names, module: module}=state) do
+  def handle_info({:lru, :clean}, %{names: names, module: module}=state) do
     Mem.Cleaners.clean(names, module)
     Mem.Cleaners.check_memory(names, state.mem_size, self)
     {:ok, state}

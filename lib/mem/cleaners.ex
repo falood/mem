@@ -28,7 +28,7 @@ defmodule Mem.Cleaners do
 
   def check_memory(names, mem_size, pid) do
     if :ets.info(names.data_ets, :memory) > mem_size do
-      send(pid, :clean)
+      send(pid, {:lru, :clean})
     end
   end
 
