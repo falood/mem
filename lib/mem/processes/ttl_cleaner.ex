@@ -1,7 +1,7 @@
 defmodule Mem.Process.TTLCleaner do
 
   defmacro __using__(opts) do
-    storages = opts |> Keyword.fetch!(:storages) |> Keyword.drop([:proxy])
+    storages = opts |> Keyword.fetch!(:storages)
 
     quote do
       @storages unquote(storages)

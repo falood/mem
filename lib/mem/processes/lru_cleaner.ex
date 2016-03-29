@@ -1,7 +1,7 @@
 defmodule Mem.Process.LRUCleaner do
 
   defmacro __using__(opts) do
-    storages        = opts |> Keyword.fetch!(:storages) |> Keyword.drop([:proxy])
+    storages        = opts |> Keyword.fetch!(:storages)
     mem_size        = opts |> Keyword.fetch!(:mem_size)
     mem_strategy    = opts |> Keyword.fetch!(:mem_strategy)
     strategy_module =
