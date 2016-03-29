@@ -1,30 +1,30 @@
 defmodule M do
-  use Mem, worker_number: 5
+  use Mem, worker_number: 5, persistence: true
 end
 
 defmodule M.Expiry do
-  use Mem, worker_number: 5
+  use Mem, worker_number: 5, persistence: true
 end
 
 defmodule M.TTL do
   use Mem,
     worker_number: 5,
     maxmemory_size: 3000,
-    maxmemory_strategy: :ttl
+    maxmemory_strategy: :ttl, persistence: true
 end
 
 defmodule M.LRU do
   use Mem,
     worker_number: 5,
     maxmemory_size: 3000,
-    maxmemory_strategy: :lru
+    maxmemory_strategy: :lru, persistence: true
 end
 
 defmodule M.FIFO do
   use Mem,
     worker_number: 5,
     maxmemory_size: 3000,
-    maxmemory_strategy: :fifo
+    maxmemory_strategy: :fifo, persistence: true
 end
 
 defmodule M.Supervisor do

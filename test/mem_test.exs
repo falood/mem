@@ -4,6 +4,7 @@ defmodule MemTest do
 
 
   test "get and set" do
+    M.del(:a)
     assert is_nil(M.get(:a))
 
     M.set(:a, 1)
@@ -14,6 +15,7 @@ defmodule MemTest do
   end
 
   test "ttl" do
+    M.del(:b)
     M.set(:b, 2)
     assert is_nil(M.ttl(:b))
 
@@ -27,6 +29,7 @@ defmodule MemTest do
   end
 
   test "expire" do
+    M.del(:c)
     assert is_nil(M.expire(:c, 100))
 
     M.set(:c, 2)
@@ -37,6 +40,7 @@ defmodule MemTest do
   end
 
   test "del" do
+    M.del(:d)
     assert :ok = M.del(:d)
 
     M.set(:d, 2)
@@ -49,6 +53,7 @@ defmodule MemTest do
   end
 
   test "flush" do
+    M.del(:e)
     assert is_nil(M.get(:e))
 
     M.set(:e, 2)
@@ -57,6 +62,7 @@ defmodule MemTest do
   end
 
   test "hget and hset" do
+    M.del(:f)
     assert is_nil(M.get(:f))
     assert :ok = M.hset(:f, :a, 1)
     assert 1 = M.hget(:f, :a)
@@ -72,6 +78,7 @@ defmodule MemTest do
   end
 
   test "inc" do
+    M.del(:g)
     assert is_nil(M.get(:g))
     M.set(:g, 1)
     assert :ok = M.inc(:g)
