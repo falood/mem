@@ -5,7 +5,8 @@ defmodule Mem.Cleaners.LRUTest do
     value = String.duplicate("a", 100)
     1..100 |> Enum.each(&M.LRU.set(&1, value))
     :timer.sleep(2000)
-    assert :ets.info(:"Mem.Data.M.LRU", :memory) <= 3000
+
+    assert Mem.Utils.storage_name(:data, M.LRU).memory_used <= 3000
   end
 
 end

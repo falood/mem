@@ -5,10 +5,10 @@ defmodule Mem.TTLCleanerTest do
     M.Expiry.set(:ttl, :value, 1)
     M.Expiry.set(:abc, :value)
     :timer.sleep(1100)
-    GenServer.whereis(:"Mem.M.Expiry.TTLCleaner") |> send(:clean)
+    Mem.Utils.process_name(:ttl, M.Expiry) |> send(:clean)
     :timer.sleep(1100)
 
-    assert [] = :ets.lookup(:"Mem.Data.M.Expiry", :ttl)
+    assert {:err, nil} = Mem.Utils.storage_name(:ttl, M.Expiry).get(:ttl)
     assert :value == M.Expiry.get(:abc)
   end
 

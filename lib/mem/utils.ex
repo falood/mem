@@ -33,4 +33,35 @@ defmodule Mem.Utils do
     do_format(t, result * 10 + h)
   end
 
+
+  def proxy_name(sub_name) do
+    Module.concat([Mem, Instances, sub_name, Proxy])
+  end
+
+  def supervisor_name(sub_name) do
+    Module.concat([Mem, Instances, sub_name, Supervisor])
+  end
+
+  def storage_name(name, sub_name) do
+    suffix =
+      %{ data:   Data,
+         ttl:    TTL,
+         lru:    LRU,
+         proxy:  Proxy,
+      }
+    Map.has_key?(suffix, name) || raise "wrong module name"
+    Module.concat([Mem, Instances, sub_name, Storage, suffix[name]])
+  end
+
+  def process_name(name, sub_name) do
+    suffix =
+      %{ ttl:    TTL,
+         lru:    LRU,
+         proxy:  Proxy,
+         worker: Worker,
+      }
+    Map.has_key?(suffix, name) || raise "wrong module name"
+    Module.concat([Mem, Instances, sub_name, Process, suffix[name]])
+  end
+
 end

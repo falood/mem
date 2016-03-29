@@ -5,7 +5,8 @@ defmodule Mem.Cleaners.FIFOTest do
     value = String.duplicate("a", 100)
     1..100 |> Enum.each(&M.FIFO.set(&1, value))
     :timer.sleep(2000)
-    assert :ets.info(:"Mem.Data.M.FIFO", :memory) <= 3000
+
+    assert Mem.Utils.storage_name(:data, M.FIFO).memory_used <= 3000
   end
 
 end
