@@ -1,4 +1,4 @@
-defmodule Mem.Process.Worker do
+defmodule Mem.Processes.Worker do
 
   defmacro __using__(opts) do
     storages = opts |> Keyword.fetch!(:storages)
