@@ -32,6 +32,7 @@ defmodule Mem.Process.LRUCleaner do
 
       def handle_cast({:update, key, time}, state) do
         @lru.update(key, time)
+        send(self, :clean)
         {:noreply, state}
       end
 
@@ -46,9 +47,10 @@ defmodule Mem.Process.LRUCleaner do
       end
 
       def handle_info(:clean, state) do
-        with true <- @data.memory > @mem_size,
+        memory_used = @data.memory_used + @ttl.memory_used + @lru.memory_used
+        with true <- memory_used > @mem_size,
              :ok  <- do_clean,
-        do:  Process.send_after(self, :clean)
+        do:  send(self, :clean)
         {:noreply, state}
       end
 

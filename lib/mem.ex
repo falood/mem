@@ -55,6 +55,10 @@ defmodule Mem do
         Supervisor.Spec.supervisor(@sup, [], id: __MODULE__)
       end
 
+      def memory_used do
+        @proxy.memory_used
+      end
+
       def get(key) do
         @proxy.get(key)
       end

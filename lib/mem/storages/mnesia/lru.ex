@@ -13,6 +13,10 @@ defmodule Mem.Storages.Mnesia.LRU do
         ])
       end
 
+      def memory_used do
+        :mnesia.table_info(@name, :memory)
+      end
+
       def update(key, time) do
         ttl = {time, System.unique_integer}
         case :mnesia.dirty_index_read(@name, key, 3) do
@@ -43,6 +47,7 @@ defmodule Mem.Storages.Mnesia.LRU do
             nil
           ttl              ->
             [{_, _, key}] = :mnesia.dirty_read(@name, ttl)
+            :mnesia.dirty_delete(@name, ttl)
             key
         end
       end

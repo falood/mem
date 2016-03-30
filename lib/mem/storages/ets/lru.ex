@@ -10,6 +10,10 @@ defmodule Mem.Storages.ETS.LRU do
         :ets.new(@index, [:ordered_set, :public, :named_table, :compressed])
       end
 
+      def memory_used do
+        :ets.info(@data, :memory) + :ets.info(@index, :memory)
+      end
+
       def update(key, time) do
         index_key = {time, System.unique_integer}
         case :ets.lookup(@data, key) do
@@ -44,6 +48,8 @@ defmodule Mem.Storages.ETS.LRU do
             nil
           idx ->
             [{_, key}] = :ets.lookup(@index, idx)
+            :ets.delete(@index, idx)
+            :ets.delete(@data, key)
             key
         end
       end
