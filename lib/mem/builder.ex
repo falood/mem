@@ -2,24 +2,22 @@ defmodule Mem.Builder do
 
   def create_proxy(opts) do
     module_name = Mem.Utils.proxy_name(opts[:name])
-    env = %{opts[:env] | file: to_string(module_name)}
     quote do
       defmodule unquote(module_name) do
         use Mem.Proxy, unquote(opts)
       end
-    end |> Code.eval_quoted([], env)
+    end |> Code.eval_quoted([], opts[:env])
     module_name
   end
 
 
   def create_supervisor(opts) do
     module_name = Mem.Utils.supervisor_name(opts[:name])
-    env = %{opts[:env] | file: to_string(module_name)}
     quote do
       defmodule unquote(module_name) do
         use Mem.Supervisor, unquote(opts)
       end
-    end |> Code.eval_quoted([], env)
+    end |> Code.eval_quoted([], opts[:env])
     module_name
   end
 
@@ -51,12 +49,11 @@ defmodule Mem.Builder do
 
   defp do_create_storages(name, base, opts) do
     module_name = Mem.Utils.storage_name(name, opts[:name])
-    env = %{opts[:env] | file: to_string(module_name)}
     quote do
       defmodule unquote(module_name) do
         use unquote(base), unquote(opts)
       end
-    end |> Code.eval_quoted([], env)
+    end |> Code.eval_quoted([], opts[:env])
     module_name
   end
 
@@ -78,12 +75,11 @@ defmodule Mem.Builder do
          lru:    Mem.Processes.LRUCleaner,
        } |> Map.get(name)
     module_name = Mem.Utils.process_name(name, opts[:name])
-    env = %{opts[:env] | file: to_string(module_name)}
     quote do
       defmodule unquote(module_name) do
         use unquote(base), unquote(opts)
       end
-    end |> Code.eval_quoted([], env)
+    end |> Code.eval_quoted([], opts[:env])
     module_name
   end
 
