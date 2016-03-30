@@ -9,6 +9,10 @@ defmodule Mem.Proxy do
       @storages      unquote(storages)
       @processes     unquote(processes)
 
+      def memory_used do
+        ( is_nil(@storages[:lru]) && 0 || @storages[:lru].memory_used
+        ) + @storages[:data].memory_used + @storages[:ttl].memory_used
+      end
 
       def get(key) do
         ( with {:ok, ttl} <- @storages[:ttl].get(key),
