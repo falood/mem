@@ -20,6 +20,7 @@ defmodule Mem do
         env:           __ENV__,
       ]
 
+      Code.compiler_options(ignore_module_conflict: true)
       @storages Mem.Builder.create_storages(@opts)
       @opts [{:storages, @storages} | @opts]
 
@@ -28,6 +29,7 @@ defmodule Mem do
 
       @proxy Mem.Builder.create_proxy(@opts)
       @sup Mem.Builder.create_supervisor(@opts)
+      Code.compiler_options(ignore_module_conflict: false)
 
       def child_spec do
         if unquote(persistence) do
