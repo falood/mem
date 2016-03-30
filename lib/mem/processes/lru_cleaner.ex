@@ -1,4 +1,4 @@
-defmodule Mem.Process.LRUCleaner do
+defmodule Mem.Processes.LRUCleaner do
 
   defmacro __using__(opts) do
     storages        = opts |> Keyword.fetch!(:storages)

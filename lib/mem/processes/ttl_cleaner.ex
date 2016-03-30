@@ -1,4 +1,4 @@
-defmodule Mem.Process.TTLCleaner do
+defmodule Mem.Processes.TTLCleaner do
 
   defmacro __using__(opts) do
     storages = opts |> Keyword.fetch!(:storages)

@@ -1,53 +1,36 @@
 defmodule Mem do
   defmacro __using__(opts) do
-    worker_number      = opts |> Keyword.get(:worker_number, 2)
-    default_ttl        = opts |> Keyword.get(:default_ttl, nil)
-    maxmemory_size     = opts |> Keyword.get(:maxmemory_size, nil)
-    maxmemory_strategy = opts |> Keyword.get(:maxmemory_strategy, :lru)
-    persistence        = opts |> Keyword.get(:persistence, false)
+    config = Application.get_env(:mem, __MODULE__, [])
+    worker_number      = opts |> Keyword.get(:worker_number, nil)       || config[:worker_number]      || 2
+    default_ttl        = opts |> Keyword.get(:default_ttl, nil)         || config[:default_ttl]        || nil
+    maxmemory_size     = opts |> Keyword.get(:maxmemory_size, nil)      || config[:maxmemory_size]     || nil
+    maxmemory_strategy = opts |> Keyword.get(:maxmemory_strategy, :lru) || config[:maxmemory_strategy] || :lru
+    persistence        = opts |> Keyword.get(:persistence, false)       || config[:persistence]        || false
     maxmemory_strategy in [:lru, :ttl, :fifo] || raise "unknown maxmemory strategy"
 
     quote do
-      opts = Application.get_env(:mem, __MODULE__, [])
-      @worker_number unquote(worker_number)      || opts[:worker_number]      || 2
-      @default_ttl   unquote(default_ttl)        || opts[:default_ttl]        || nil
-      @opts_mem_size unquote(maxmemory_size)     || opts[:maxmemory_size]     || nil
-      @mem_strategy  unquote(maxmemory_strategy) || opts[:maxmemory_strategy] || :lru
-      @mem_size      Mem.Utils.format_space_size(@opts_mem_size)
-      @persistence   unquote(persistence)
-
-      @storages [
-        proxy: Mem.Builder.create_proxy_storage_module(__MODULE__, __ENV__),
-        data:  Mem.Builder.create_data_storage_module(@persistence, __MODULE__, __ENV__),
-        ttl:   Mem.Builder.create_ttl_storage_module(@persistence, __MODULE__, __ENV__),
+      "Elixir." <> name = __MODULE__ |> to_string
+      @opts [
+        worker_number: unquote(worker_number),
+        default_ttl:   unquote(default_ttl),
+        mem_size:      unquote(Mem.Utils.format_space_size(maxmemory_size)),
+        mem_strategy:  unquote(maxmemory_strategy),
+        persistence:   unquote(persistence),
+        name:          name,
+        env:           __ENV__,
       ]
 
-      @processes [
-        proxy: Mem.Builder.create_proxy_process_module(__MODULE__, __ENV__),
-        ttl:   Mem.Builder.create_ttl_process_module(@storages, __MODULE__, __ENV__),
-      ]
+      @storages Mem.Builder.create_storages(@opts)
+      @opts [{:storages, @storages} | @opts]
 
-      unless is_nil(@mem_size) do
-        @storages put_in(@storages, [:lru], Mem.Builder.create_lru_storage_module(
-              @persistence, __MODULE__, __ENV__
-        ))
-        @processes put_in(@processes, [:lru], Mem.Builder.create_lru_process_module(
-            @storages, @mem_size, @mem_strategy, __MODULE__, __ENV__
-        ))
-      end
+      @processes Mem.Builder.create_processes(@opts)
+      @opts [{:processes, @processes} | @opts]
 
-      Mem.Builder.create_worker_process_module(@storages, __MODULE__, __ENV__)
-
-      @proxy Mem.Builder.create_proxy_module(
-        @storages, @processes, @worker_number, __MODULE__, __ENV__
-      )
-
-      @sup Mem.Builder.create_supervisor_module(
-        @storages, @processes, __MODULE__, __ENV__
-      )
+      @proxy Mem.Builder.create_proxy(@opts)
+      @sup Mem.Builder.create_supervisor(@opts)
 
       def child_spec do
-        if @persistence do
+        if unquote(persistence) do
           Application.start(:mnesia)
           :mnesia.create_schema([node])
           :mnesia.change_table_copy_type(:schema, node, :disc_copies)
@@ -64,7 +47,7 @@ defmodule Mem do
       end
 
       def set(key, value) do
-        set(key, value, @default_ttl)
+        set(key, value, unquote(default_ttl))
       end
 
       def set(key, value, nil) do
