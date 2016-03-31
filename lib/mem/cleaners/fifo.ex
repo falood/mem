@@ -4,14 +4,14 @@ defmodule Mem.Cleaners.FIFO do
     quote do
 
       def callback(:set, key, _) do
-        GenServer.cast(__MODULE__, {:update, key, Mem.Utils.now})
+        do_update(key, Mem.Utils.now)
       end
 
       def callback(_, _, _) do
       end
 
       def callback(:del, key) do
-        GenServer.cast(__MODULE__, {:delete, key})
+        do_delete(key)
       end
 
       def callback(_, _) do

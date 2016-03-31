@@ -10,11 +10,11 @@ defmodule Mem.Cleaners.TTL do
           else
             ttl
           end
-        GenServer.cast(__MODULE__, {:update, key, time})
+        do_update(key, time)
       end
 
       def callback(:del, key) do
-        GenServer.cast(__MODULE__, {:delete, key})
+        do_delete(key)
       end
 
       def callback(_, _) do

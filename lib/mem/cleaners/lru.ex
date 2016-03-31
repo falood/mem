@@ -5,16 +5,16 @@ defmodule Mem.Cleaners.LRU do
 
       def callback(cmd, key, _)
       when cmd in [:set, :expire] do
-        GenServer.cast(__MODULE__, {:update, key, Mem.Utils.now})
+        do_update(key, Mem.Utils.now)
       end
 
       def callback(cmd, key)
       when cmd in [:get, :ttl, :update] do
-        GenServer.cast(__MODULE__, {:update, key, Mem.Utils.now})
+        do_update(key, Mem.Utils.now)
       end
 
       def callback(:del, key) do
-        GenServer.cast(__MODULE__, {:delete, key})
+        do_delete(key)
       end
 
       def callback(_, _) do

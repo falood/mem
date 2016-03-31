@@ -1,5 +1,4 @@
 defmodule Mem.Processes.LRUCleaner do
-
   defmacro __using__(opts) do
     storages        = opts |> Keyword.fetch!(:storages)
     mem_size        = opts |> Keyword.fetch!(:mem_size)
@@ -18,6 +17,7 @@ defmodule Mem.Processes.LRUCleaner do
       @lru      @storages[:lru]
       @ttl      @storages[:ttl]
       @data     @storages[:data]
+      @interval :timer.seconds(10)
 
       use GenServer
       use unquote(strategy_module)
@@ -27,31 +27,20 @@ defmodule Mem.Processes.LRUCleaner do
       end
 
       def init([]) do
-        {:ok, []}
-      end
-
-      def handle_cast({:update, key, time}, state) do
-        @lru.update(key, time)
-        send(self, :clean)
-        {:noreply, state}
-      end
-
-      def handle_cast({:delete, key}, state) do
-        @lru.delete(key)
-        {:noreply, state}
-      end
-
-      def handle_cast(:flush, state) do
-        @lru.flush
-        {:noreply, state}
+        Process.send_after(self, :clean, @interval)
+        {:ok, [], :hibernate}
       end
 
       def handle_info(:clean, state) do
         memory_used = @data.memory_used + @ttl.memory_used + @lru.memory_used
-        with true <- memory_used > @mem_size,
-             :ok  <- do_clean,
-        do:  send(self, :clean)
-        {:noreply, state}
+        ( with true <- memory_used > @mem_size,
+               :ok  <- do_clean,
+          do: :clean
+        ) |> case do
+          :clean -> send(self, :clean)
+          _      -> Process.send_after(self, :clean, @interval)
+        end
+        {:noreply, state, :hibernate}
       end
 
       def handle_info(_, state) do
@@ -66,6 +55,14 @@ defmodule Mem.Processes.LRUCleaner do
             @ttl.del(key)
             :ok
         end
+      end
+
+      defp do_update(key, time) do
+        @lru.update(key, time)
+      end
+
+      defp do_delete(key) do
+        @lru.delete(key)
       end
 
     end
