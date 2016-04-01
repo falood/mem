@@ -9,7 +9,7 @@ defmodule Mem.TTLCleanerTest do
     :timer.sleep(1100)
 
     assert {:err, nil} = Mem.Utils.storage_name(:ttl, M.Expiry).get(:ttl)
-    assert :value == M.Expiry.get(:abc)
+    assert {:ok, :value} == M.Expiry.get(:abc)
   end
 
 end
