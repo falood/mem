@@ -26,11 +26,11 @@ defmodule Mem.Proxy do
 
     lru_memory_used_block =
       if is_nil(storages[:lru]) do
+        0
+      else
         quote do
           unquote(storages[:lru]).memory_used
         end
-      else
-        0
       end
 
     quote do
