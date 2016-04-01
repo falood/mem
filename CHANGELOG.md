@@ -1,5 +1,10 @@
 ## Changelog
 
+## v0.2.0-dev
+* Enhancements
+  * totally rewrite by using heavy macros
+  * add persistence support by Mnesia
+
 ## v0.1.2 (2016-03-25)
 * Bugfix
   * format maxmemory_size within config.exs
