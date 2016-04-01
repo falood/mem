@@ -1,6 +1,6 @@
 ## Changelog
 
-## v0.2.0-dev
+## v0.2.0 (2016-04-01)
 * Enhancements
   * totally rewrite by using heavy macros
   * add persistence support by Mnesia
