@@ -87,8 +87,9 @@ defmodule Mem do
 
       def hget(key, field) do
         case @proxy.get(key) do
-          value when is_map(value) -> Map.get(value, field)
-          _ -> nil
+          {:ok, value} when is_map(value) ->
+            {:ok, Map.get(value, field)}
+          _ -> {:err, nil}
         end
       end
 

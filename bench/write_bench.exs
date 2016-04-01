@@ -39,15 +39,6 @@ defmodule WriteBench do
   use Benchfella
 
   setup_all do
-  #   bench_dir = "/tmp/mem/write_bench"
-  #   File.rm_rf!(bench_dir)
-  #   File.mkdir_p!(bench_dir)
-  #   Application.unload(:mnesia)
-  #   Application.load(:mnesia)
-  #   Application.put_env(:mnesia, :dir, to_char_list(bench_dir))
-  #   Application.put_env(:mnesia, :dc_dump_limit, 40)
-  #   Application.put_env(:mnesia, :dump_log_write_threshold, 50000)
-
     :ets.new(:bench_write, [:set, :public, :named_table, write_concurrency: true])
     BenchWrite.Supervisor.start_link
   end

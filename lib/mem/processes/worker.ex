@@ -1,7 +1,23 @@
 defmodule Mem.Processes.Worker do
 
   defmacro __using__(opts) do
-    storages = opts |> Keyword.fetch!(:storages)
+    storages  = opts |> Keyword.fetch!(:storages)
+    lru_cleaner = Mem.Utils.process_name(:lru, opts[:name])
+
+    callbacks =
+      if is_nil(storages[:lru]) do
+        [ set: nil,
+          del: nil,
+          expire: nil,
+          update: nil,
+        ]
+      else
+        [ del:    quote do unquote(lru_cleaner).callback(:del, key)         end,
+          set:    quote do unquote(lru_cleaner).callback(:set, key, ttl)    end,
+          expire: quote do unquote(lru_cleaner).callback(:expire, key, ttl) end,
+          update: quote do unquote(lru_cleaner).callback(:update, key)      end,
+        ]
+      end
 
     quote do
       @data unquote(storages[:data])
@@ -20,37 +36,68 @@ defmodule Mem.Processes.Worker do
       def handle_call({:insert, key, value, ttl}, _from, state) do
         is_nil(ttl) && @ttl.del(key) || @ttl.set(key, ttl)
         @data.set(key, value)
-        {:reply, :ok, state}
-      end
-
-      def handle_call({:expire, key, nil}, _from, state) do
-        @ttl.del(key)
+        unquote(callbacks[:set])
         {:reply, :ok, state}
       end
 
       def handle_call({:expire, key, ttl}, _from, state) do
-        @ttl.set(key, ttl)
-        {:reply, :ok, state}
+        if exist?(key) do
+          is_nil(ttl) && @ttl.del(key) || @ttl.set(key, ttl)
+          unquote(callbacks[:expire])
+          {:reply, :ok, state}
+        else
+          do_delete(key)
+          {:reply, nil, state}
+        end
       end
 
       def handle_call({:delete, key}, _from, state) do
-        @data.del(key)
-        @ttl.del(key)
+        do_delete(key)
         {:reply, :ok, state}
       end
 
-      def handle_call({:update, key, func}, _from, state) do
-        reply =
+      def handle_call({:update, key, func, default}, _from, state) do
+        if exist?(key) do
           try do
             {:ok, value} = @data.get(key)
             @data.set(key, func.(value))
-            func.(value)
-            :ok
+            unquote(callbacks[:update])
+            {:reply, :ok, state}
           rescue
-            _ -> nil
+            _ ->
+              {:reply, nil, state}
           end
-        {:reply, reply, state}
+        else
+          ttl = nil
+          @data.set(key, default)
+          unquote(callbacks[:set])
+          {:reply, :ok, state}
+        end
       end
+
+      defp exist?(key) do
+        now = Mem.Utils.now
+        case @data.get(key) do
+          {:ok, _} ->
+            case @ttl.get(key) do
+              {:err, nil} ->
+                true
+              {:ok, ttl} when ttl >= now ->
+                true
+              _ ->
+                false
+            end
+          _ ->
+            false
+        end
+      end
+
+      defp do_delete(key) do
+        @data.del(key)
+        @ttl.del(key)
+        unquote(callbacks[:del])
+      end
+
 
     end
 
