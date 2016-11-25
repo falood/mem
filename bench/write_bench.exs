@@ -47,34 +47,28 @@ defmodule WriteBench do
     BenchWrite.Supervisor.stop
   end
 
-  bench "bench ETS write" do
-    Enum.each(1..100_000, fn x ->
-      :ets.insert(:bench_write, {x, x})
-    end)
+  bench "bench ETS write", [id: get_id()] do
+    :ets.insert(:bench_write, {id, id})
   end
 
-  bench "bench Mem write" do
-    Enum.each(1..100_000, fn x ->
-      BenchWrite.set(x, x, 200)
-    end)
+  bench "bench Mem write", [id: get_id()] do
+    BenchWrite.set(id, id, 200)
   end
 
-  bench "bench Mem write with Persistence" do
-    Enum.each(1..100_000, fn x ->
-      BenchWrite.Persistence.set(x, x)
-    end)
+  bench "bench Mem write with Persistence", [id: get_id()] do
+    BenchWrite.Persistence.set(id, id)
   end
 
-  bench "bench Mem write with LRU" do
-    Enum.each(1..100_000, fn x ->
-      BenchWrite.LRU.set(x, x)
-    end)
+  bench "bench Mem write with LRU", [id: get_id()] do
+    BenchWrite.LRU.set(id, id)
   end
 
-  bench "bench Mem write with Persistence and LRU" do
-    Enum.each(1..100_000, fn x ->
-      BenchWrite.Persistence.LRU.set(x, x)
-    end)
+  bench "bench Mem write with Persistence and LRU", [id: get_id()] do
+    BenchWrite.Persistence.LRU.set(id, id)
+  end
+
+  defp get_id do
+    :rand.uniform(100_000)
   end
 
 end

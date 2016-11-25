@@ -1,1 +1,1 @@
-%{"benchfella": {:hex, :benchfella, "0.3.2"}}
+%{"benchfella": {:hex, :benchfella, "0.3.2", "b9648e77fa8d8b8b9fe8f54293bee63f7de03909b3af6ab22a0e546716a396fb", [:mix], []}}

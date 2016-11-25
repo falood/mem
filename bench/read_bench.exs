@@ -61,34 +61,28 @@ defmodule ReadBench do
     BenchRead.Supervisor.stop
   end
 
-  bench "bench ETS read" do
-    Enum.each(1..100_000, fn x ->
-      :ets.lookup(:bench_read, x)
-    end)
+  bench "bench ETS read", [id: get_id()] do
+    :ets.lookup(:bench_read, id)
   end
 
-  bench "bench Mem read" do
-    Enum.each(1..100_000, fn x ->
-      BenchRead.get(x)
-    end)
+  bench "bench Mem read", [id: get_id()] do
+    BenchRead.get(id)
   end
 
-  bench "bench Mem read with Persistence" do
-    Enum.each(1..100_000, fn x ->
-      BenchRead.Persistence.get(x)
-    end)
+  bench "bench Mem read with Persistence", [id: get_id()] do
+    BenchRead.Persistence.get(id)
   end
 
-  bench "bench Mem read with LRU" do
-    Enum.each(1..100_000, fn x ->
-      BenchRead.LRU.get(x)
-    end)
+  bench "bench Mem read with LRU", [id: get_id()] do
+    BenchRead.LRU.get(id)
   end
 
-  bench "bench Mem read with Persistence and LRU" do
-    Enum.each(1..100_000, fn x ->
-      BenchRead.Persistence.LRU.get(x)
-    end)
+  bench "bench Mem read with Persistence and LRU", [id: get_id()]  do
+    BenchRead.Persistence.LRU.get(id)
+  end
+
+  defp get_id do
+    :rand.uniform(100_000)
   end
 
 end
