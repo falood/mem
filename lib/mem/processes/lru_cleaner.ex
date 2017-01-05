@@ -27,18 +27,18 @@ defmodule Mem.Processes.LRUCleaner do
       end
 
       def init([]) do
-        Process.send_after(self, :clean, @interval)
+        Process.send_after(self(), :clean, @interval)
         {:ok, [], :hibernate}
       end
 
       def handle_info(:clean, state) do
         memory_used = @data.memory_used + @ttl.memory_used + @lru.memory_used
         ( with true <- memory_used > @mem_size,
-               :ok  <- do_clean,
+               :ok  <- do_clean(),
           do: :clean
         ) |> case do
-          :clean -> send(self, :clean)
-          _      -> Process.send_after(self, :clean, @interval)
+          :clean -> send(self(), :clean)
+          _      -> Process.send_after(self(), :clean, @interval)
         end
         {:noreply, state, :hibernate}
       end

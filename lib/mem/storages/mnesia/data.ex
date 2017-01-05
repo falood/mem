@@ -5,7 +5,7 @@ defmodule Mem.Storages.Mnesia.Data do
       @name :"#{__MODULE__}.Mnesia"
 
       def create do
-        :mnesia.create_table(@name, [type: :set, disc_copies: [node]])
+        :mnesia.create_table(@name, [type: :set, disc_copies: [node()]])
       end
 
       def memory_used do

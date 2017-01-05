@@ -54,7 +54,7 @@ defmodule ReadBench do
       :ets.insert(:bench_read, {x, x})
     end)
 
-    {:ok, self}
+    {:ok, self()}
   end
 
   teardown_all _ do

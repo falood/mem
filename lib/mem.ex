@@ -34,8 +34,8 @@ defmodule Mem do
       def child_spec do
         if unquote(persistence) do
           Application.start(:mnesia)
-          :mnesia.create_schema([node])
-          :mnesia.change_table_copy_type(:schema, node, :disc_copies)
+          :mnesia.create_schema([node()])
+          :mnesia.change_table_copy_type(:schema, node(), :disc_copies)
         end
         Supervisor.Spec.supervisor(@sup, [], id: __MODULE__)
       end

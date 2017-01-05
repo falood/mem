@@ -42,16 +42,16 @@ defmodule M.Supervisor do
   end
 
   def init([]) do
-    [ M.child_spec,
-      M.Expiry.child_spec,
-      M.TTL.child_spec,
-      M.LRU.child_spec,
-      M.FIFO.child_spec,
+    [ M.child_spec(),
+      M.Expiry.child_spec(),
+      M.TTL.child_spec(),
+      M.LRU.child_spec(),
+      M.FIFO.child_spec(),
     ] |> supervise(strategy: :one_for_one)
   end
 
 end
 
-M.Supervisor.start_link
+M.Supervisor.start_link()
 
 ExUnit.start()

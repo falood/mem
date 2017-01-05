@@ -8,8 +8,8 @@ defmodule Mem.Storages.Mnesia.TTL do
         # Application.load :mnesia
         # Application.put_env :mnesia, :dir, '/tmp/mn'
         # :mnesia.start
-        # :mnesia.change_table_copy_type(:schema, node, :disc_copies)
-        :mnesia.create_table(@name, [type: :set, disc_copies: [node]])
+        # :mnesia.change_table_copy_type(:schema, node(), :disc_copies)
+        :mnesia.create_table(@name, [type: :set, disc_copies: [node()]])
       end
 
       def memory_used do
@@ -41,7 +41,7 @@ defmodule Mem.Storages.Mnesia.TTL do
       end
 
       def next(key) do
-        :mnesia.dirty_next(@name, key) |> IO.inspect
+        :mnesia.dirty_next(@name, key)
       end
 
 

@@ -8,10 +8,10 @@ defmodule Mem.Mixfile do
       elixir: "~> 1.2",
       build_embedded: Mix.env == :prod,
       start_permanent: Mix.env == :prod,
-      deps: deps,
+      deps: deps(),
       description: "KV cache with TTL, LRU and Persistence support",
       source_url: "https://github.com/falood/mem",
-      package: package,
+      package: package(),
     ]
   end
 

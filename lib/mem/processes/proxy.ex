@@ -25,7 +25,7 @@ defmodule Mem.Processes.Proxy do
         result =
           case @storage.take_worker(hash) do
             nil ->
-              pid = create_worker
+              pid = create_worker()
               @storage.set(hash, pid)
               pid
             pid -> pid

@@ -21,7 +21,7 @@ defmodule Mem.Processes.TTLCleaner do
              interval: interval,
              number: 20,
            }
-        Process.send_after(self, :clean, interval)
+        Process.send_after(self(), :clean, interval)
         {:ok, state}
       end
 
@@ -31,7 +31,7 @@ defmodule Mem.Processes.TTLCleaner do
             do_clean(acc)
           end)
 
-        Process.send_after(self, :clean, state.interval)
+        Process.send_after(self(), :clean, state.interval)
         {:noreply, %{state | ref: ref}}
       end
 
