@@ -26,10 +26,10 @@ defmodule BenchRead.Supervisor do
   end
 
   def init([]) do
-    [ BenchRead.child_spec,
-      BenchRead.Persistence.child_spec,
-      BenchRead.LRU.child_spec,
-      BenchRead.Persistence.LRU.child_spec,
+    [ BenchRead.child_spec(),
+      BenchRead.Persistence.child_spec(),
+      BenchRead.LRU.child_spec(),
+      BenchRead.Persistence.LRU.child_spec(),
     ] |> supervise(strategy: :one_for_one)
   end
 
@@ -39,12 +39,12 @@ defmodule ReadBench do
   use Benchfella
 
   setup_all do
-    bench_dir = Application.get_env(:mnesia, :dir) |> to_string
+    bench_dir = Application.get_env(:mnesia, :dir) |> to_string()
     File.rm_rf!(bench_dir)
     File.mkdir_p!(bench_dir)
 
     :ets.new(:bench_read, [:set, :public, :named_table, write_concurrency: true])
-    BenchRead.Supervisor.start_link
+    BenchRead.Supervisor.start_link()
 
     Enum.each(1..100_000, fn x ->
       BenchRead.set(x, x)
@@ -58,7 +58,7 @@ defmodule ReadBench do
   end
 
   teardown_all _ do
-    BenchRead.Supervisor.stop
+    BenchRead.Supervisor.stop()
   end
 
   bench "bench ETS read", [id: get_id()] do

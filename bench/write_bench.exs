@@ -26,10 +26,10 @@ defmodule BenchWrite.Supervisor do
   end
 
   def init([]) do
-    [ BenchWrite.child_spec,
-      BenchWrite.Persistence.child_spec,
-      BenchWrite.LRU.child_spec,
-      BenchWrite.Persistence.LRU.child_spec,
+    [ BenchWrite.child_spec(),
+      BenchWrite.Persistence.child_spec(),
+      BenchWrite.LRU.child_spec(),
+      BenchWrite.Persistence.LRU.child_spec(),
     ] |> supervise(strategy: :one_for_one)
   end
 
@@ -40,11 +40,11 @@ defmodule WriteBench do
 
   setup_all do
     :ets.new(:bench_write, [:set, :public, :named_table, write_concurrency: true])
-    BenchWrite.Supervisor.start_link
+    BenchWrite.Supervisor.start_link()
   end
 
   teardown_all _ do
-    BenchWrite.Supervisor.stop
+    BenchWrite.Supervisor.stop()
   end
 
   bench "bench ETS write", [id: get_id()] do
