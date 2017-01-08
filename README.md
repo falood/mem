@@ -52,6 +52,8 @@
 
     Cache.hset(:c, :a, 2)
     Cache.hget(:c, :a)
+
+    Cache.memory_used()
     ```
 
 ## Thanks
