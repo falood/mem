@@ -1,6 +1,6 @@
 ## Changelog
 
-## v0.2.1-dev
+## v0.3.0 (2017-01-08)
 * Bugfix
   * fix elixir v1.4.0 warning
   * use correct name for lru and replacement(out)
