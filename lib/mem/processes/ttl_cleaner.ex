@@ -15,23 +15,32 @@ defmodule Mem.Processes.TTLCleaner do
       end
 
       def init([]) do
-        interval = :timer.seconds(60) # 1 min
+        interval = :timer.seconds(20)
         state =
           %{ ref: :"$end_of_table",
              interval: interval,
-             number: 20,
+             number: 200,
            }
         Process.send_after(self(), :clean, interval)
         {:ok, state}
       end
 
       def handle_info(:clean, state) do
-        ref =
-          Enum.reduce(1..state.number, state.ref, fn(_, acc) ->
-            do_clean(acc)
+        {num, ref} =
+          Enum.reduce(1..state.number, {0, state.ref}, fn
+            _, {num, :"$end_of_table"} ->
+              {num, @ttl.first}
+            _, {num, ref} ->
+              case do_clean(ref) do
+                {:ok,  new_ref} -> {num + 1, new_ref}
+                {:err, new_ref} -> {num,     new_ref}
+              end
           end)
-
-        Process.send_after(self(), :clean, state.interval)
+        if num + num < state.number do
+          Process.send_after(self(), :clean, state.interval)
+        else
+          Process.send_after(self(), :clean, 100)
+        end
         {:noreply, %{state | ref: ref}}
       end
 
@@ -39,19 +48,23 @@ defmodule Mem.Processes.TTLCleaner do
         {:noreply, state}
       end
 
-      defp do_clean(:"$end_of_table") do
-        @ttl.first
-      end
-
       defp do_clean(key) do
-        @ttl.del(key)
-        @data.del(key)
-        is_nil(@storages[:out]) || @storages[:out].delete(key)
+        now = Mem.Utils.now()
+        result =
+          case @ttl.get(key) do
+            {:ok, value} when value <= now ->
+              @ttl.del(key)
+              @data.del(key)
+              is_nil(@storages[:out]) || @storages[:out].delete(key)
+              :ok
+            _ -> :err
+          end
+
         try do
-          @ttl.next(key)
+          {result, @ttl.next(key)}
         catch
           _, _ ->
-            @ttl.first
+            {result, @ttl.first}
         end
       end
 

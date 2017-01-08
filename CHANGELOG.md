@@ -1,5 +1,9 @@
 ## Changelog
 
+## v0.3.1-dev
+* Bugfix:
+  * ttl cleaner clean unexpired keys
+
 ## v0.3.0 (2017-01-08)
 * Bugfix
   * fix elixir v1.4.0 warning
