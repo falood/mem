@@ -1,4 +1,4 @@
-defmodule Mem.Storages.Mnesia.LRU do
+defmodule Mem.Storages.Mnesia.Out do
 
   defmacro __using__(_) do
     quote do

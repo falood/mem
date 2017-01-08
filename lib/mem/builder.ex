@@ -24,7 +24,7 @@ defmodule Mem.Builder do
 
   def create_storages(opts) do
     [ :proxy, :data, :ttl |
-      (is_nil(opts[:mem_size]) && [] || [:lru])
+      (is_nil(opts[:mem_size]) && [] || [:out])
     ] |> Enum.map(fn name ->
       base = do_base(name, opts)
       {name, do_create_storages(name, base, opts)}
@@ -39,8 +39,8 @@ defmodule Mem.Builder do
     opts[:persistence] && Mem.Storages.Mnesia.TTL || Mem.Storages.ETS.TTL
   end
 
-  defp do_base(:lru, opts) do
-    opts[:persistence] && Mem.Storages.Mnesia.LRU || Mem.Storages.ETS.LRU
+  defp do_base(:out, opts) do
+    opts[:persistence] && Mem.Storages.Mnesia.Out || Mem.Storages.ETS.Out
   end
 
   defp do_base(:proxy, _) do
@@ -61,7 +61,7 @@ defmodule Mem.Builder do
   def create_processes(opts) do
     do_create_processes(:worker, opts)
     [ :proxy, :ttl |
-      (is_nil(opts[:mem_size]) && [] || [:lru])
+      (is_nil(opts[:mem_size]) && [] || [:out])
     ] |> Enum.map(fn name ->
       {name, do_create_processes(name, opts)}
     end)
@@ -72,7 +72,7 @@ defmodule Mem.Builder do
       %{ proxy:  Mem.Processes.Proxy,
          worker: Mem.Processes.Worker,
          ttl:    Mem.Processes.TTLCleaner,
-         lru:    Mem.Processes.LRUCleaner,
+         out:    Mem.Processes.OutCleaner,
        } |> Map.get(name)
     module_name = Mem.Utils.process_name(name, opts[:name])
     quote do

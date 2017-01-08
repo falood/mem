@@ -2,20 +2,20 @@ defmodule Mem.Processes.Worker do
 
   defmacro __using__(opts) do
     storages  = opts |> Keyword.fetch!(:storages)
-    lru_cleaner = Mem.Utils.process_name(:lru, opts[:name])
+    out_cleaner = Mem.Utils.process_name(:out, opts[:name])
 
     callbacks =
-      if is_nil(storages[:lru]) do
+      if is_nil(storages[:out]) do
         [ set: nil,
           del: nil,
           expire: nil,
           update: nil,
         ]
       else
-        [ del:    quote do unquote(lru_cleaner).callback(:del, key)         end,
-          set:    quote do unquote(lru_cleaner).callback(:set, key, ttl)    end,
-          expire: quote do unquote(lru_cleaner).callback(:expire, key, ttl) end,
-          update: quote do unquote(lru_cleaner).callback(:update, key)      end,
+        [ del:    quote do unquote(out_cleaner).callback(:del, key)         end,
+          set:    quote do unquote(out_cleaner).callback(:set, key, ttl)    end,
+          expire: quote do unquote(out_cleaner).callback(:expire, key, ttl) end,
+          update: quote do unquote(out_cleaner).callback(:update, key)      end,
         ]
       end
 

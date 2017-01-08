@@ -46,7 +46,7 @@ defmodule Mem.Processes.TTLCleaner do
       defp do_clean(key) do
         @ttl.del(key)
         @data.del(key)
-        is_nil(@storages[:lru]) || @storages[:lru].delete(key)
+        is_nil(@storages[:out]) || @storages[:out].delete(key)
         try do
           @ttl.next(key)
         catch

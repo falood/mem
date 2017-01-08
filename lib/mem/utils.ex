@@ -45,7 +45,7 @@ defmodule Mem.Utils do
     suffix =
       %{ data:   Data,
          ttl:    TTL,
-         lru:    LRU,
+         out:    Out,
          proxy:  Proxy,
       }
     Map.has_key?(suffix, name) || raise "wrong module name"
@@ -55,7 +55,7 @@ defmodule Mem.Utils do
   def process_name(name, sub_name) do
     suffix =
       %{ ttl:    TTL,
-         lru:    LRU,
+         out:    Out,
          proxy:  Proxy,
          worker: Worker,
       }

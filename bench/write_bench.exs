@@ -6,11 +6,11 @@ defmodule BenchWrite.Persistence do
   use Mem, worker_number: 2, persistence: true
 end
 
-defmodule BenchWrite.LRU do
+defmodule BenchWrite.Out do
   use Mem, worker_number: 2, maxmemory_size: "100M"
 end
 
-defmodule BenchWrite.Persistence.LRU do
+defmodule BenchWrite.Persistence.Out do
   use Mem, worker_number: 2, maxmemory_size: "100M", persistence: true
 end
 
@@ -28,8 +28,8 @@ defmodule BenchWrite.Supervisor do
   def init([]) do
     [ BenchWrite.child_spec(),
       BenchWrite.Persistence.child_spec(),
-      BenchWrite.LRU.child_spec(),
-      BenchWrite.Persistence.LRU.child_spec(),
+      BenchWrite.Out.child_spec(),
+      BenchWrite.Persistence.Out.child_spec(),
     ] |> supervise(strategy: :one_for_one)
   end
 
@@ -59,12 +59,12 @@ defmodule WriteBench do
     BenchWrite.Persistence.set(id, id)
   end
 
-  bench "bench Mem write with LRU", [id: get_id()] do
-    BenchWrite.LRU.set(id, id)
+  bench "bench Mem write with Replacement", [id: get_id()] do
+    BenchWrite.Out.set(id, id)
   end
 
-  bench "bench Mem write with Persistence and LRU", [id: get_id()] do
-    BenchWrite.Persistence.LRU.set(id, id)
+  bench "bench Mem write with Persistence and Replacement", [id: get_id()] do
+    BenchWrite.Persistence.Out.set(id, id)
   end
 
   defp get_id do

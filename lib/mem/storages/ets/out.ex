@@ -1,4 +1,4 @@
-defmodule Mem.Storages.ETS.LRU do
+defmodule Mem.Storages.ETS.Out do
 
   defmacro __using__(_) do
     quote do

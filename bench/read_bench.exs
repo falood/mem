@@ -6,11 +6,11 @@ defmodule BenchRead.Persistence do
   use Mem, worker_number: 2, persistence: true
 end
 
-defmodule BenchRead.LRU do
+defmodule BenchRead.Out do
   use Mem, worker_number: 2, maxmemory_size: "100M"
 end
 
-defmodule BenchRead.Persistence.LRU do
+defmodule BenchRead.Persistence.Out do
   use Mem, worker_number: 2, maxmemory_size: "100M", persistence: true
 end
 
@@ -28,8 +28,8 @@ defmodule BenchRead.Supervisor do
   def init([]) do
     [ BenchRead.child_spec(),
       BenchRead.Persistence.child_spec(),
-      BenchRead.LRU.child_spec(),
-      BenchRead.Persistence.LRU.child_spec(),
+      BenchRead.Out.child_spec(),
+      BenchRead.Persistence.Out.child_spec(),
     ] |> supervise(strategy: :one_for_one)
   end
 
@@ -49,8 +49,8 @@ defmodule ReadBench do
     Enum.each(1..100_000, fn x ->
       BenchRead.set(x, x)
       BenchRead.Persistence.set(x, x)
-      BenchRead.LRU.set(x, x)
-      BenchRead.Persistence.LRU.set(x, x)
+      BenchRead.Out.set(x, x)
+      BenchRead.Persistence.Out.set(x, x)
       :ets.insert(:bench_read, {x, x})
     end)
 
@@ -73,12 +73,12 @@ defmodule ReadBench do
     BenchRead.Persistence.get(id)
   end
 
-  bench "bench Mem read with LRU", [id: get_id()] do
-    BenchRead.LRU.get(id)
+  bench "bench Mem read with Replacement", [id: get_id()] do
+    BenchRead.Out.get(id)
   end
 
-  bench "bench Mem read with Persistence and LRU", [id: get_id()]  do
-    BenchRead.Persistence.LRU.get(id)
+  bench "bench Mem read with Persistence and Replacement", [id: get_id()]  do
+    BenchRead.Persistence.Out.get(id)
   end
 
   defp get_id do

@@ -9,7 +9,7 @@ defmodule Mem.Mixfile do
       build_embedded: Mix.env == :prod,
       start_permanent: Mix.env == :prod,
       deps: deps(),
-      description: "KV cache with TTL, LRU and Persistence support",
+      description: "KV cache with TTL, Replacement and Persistence support",
       source_url: "https://github.com/falood/mem",
       package: package(),
     ]

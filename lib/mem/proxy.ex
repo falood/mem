@@ -5,36 +5,36 @@ defmodule Mem.Proxy do
     worker_number = opts |> Keyword.fetch!(:worker_number)
 
     callbacks =
-      if is_nil(processes[:lru]) do
+      if is_nil(processes[:out]) do
         [ get: nil,
           ttl: nil,
         ]
       else
-        [ get:    quote do unquote(processes[:lru]).callback(:get, key) end,
-          ttl:    quote do unquote(processes[:lru]).callback(:ttl, key) end,
+        [ get:    quote do unquote(processes[:out]).callback(:get, key) end,
+          ttl:    quote do unquote(processes[:out]).callback(:ttl, key) end,
         ]
       end
 
-    lru_memory_used_block =
-      if is_nil(storages[:lru]) do
+    out_memory_used_block =
+      if is_nil(storages[:out]) do
         0
       else
         quote do
-          unquote(storages[:lru]).memory_used
+          unquote(storages[:out]).memory_used
         end
       end
 
-    lru_flush_block =
-      unless is_nil(storages[:lru]) do
+    out_flush_block =
+      unless is_nil(storages[:out]) do
         quote do
-          unquote(storages[:lru]).flush
+          unquote(storages[:out]).flush
         end
       end
 
     quote do
 
       def memory_used do
-        unquote(lru_memory_used_block) + unquote(storages[:data]).memory_used + unquote(storages[:ttl]).memory_used
+        unquote(out_memory_used_block) + unquote(storages[:data]).memory_used + unquote(storages[:ttl]).memory_used
       end
 
       def get(key) do
@@ -85,7 +85,7 @@ defmodule Mem.Proxy do
       def flush do
         unquote(storages[:data]).flush
         unquote(storages[:ttl]).flush
-        unquote(lru_flush_block)
+        unquote(out_flush_block)
         :ok
       end
 
