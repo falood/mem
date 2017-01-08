@@ -3,6 +3,7 @@
 > KV cache with TTL, Replacement and Persistence support
 
 [![Build Status](https://img.shields.io/travis/falood/mem.svg?style=flat-square)](https://travis-ci.org/falood/mem)
+[![Coveralls](https://img.shields.io/coveralls/falood/mem.svg?style=flat-square)](https://coveralls.io/github/falood/mem)
 [![Hex.pm Version](https://img.shields.io/hexpm/v/mem.svg?style=flat-square)](https://hex.pm/packages/mem)
 [![Hex.pm Downloads](https://img.shields.io/hexpm/dt/mem.svg?style=flat-square)](https://hex.pm/packages/mem)
 ## Usage

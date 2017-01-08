@@ -8,7 +8,6 @@ defmodule Mem.Processes.OutCleaner do
         :lru  -> Mem.Cleaners.LRU
         :ttl  -> Mem.Cleaners.TTL
         :fifo -> Mem.Cleaners.FIFO
-        _     -> raise "unknow max memory strategy"
       end
 
     quote do

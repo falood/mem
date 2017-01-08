@@ -99,4 +99,12 @@ defmodule MemTest do
     assert nil == M.inc(:g)
   end
 
+  test "unknown maxmemory strategy" do
+    assert_raise RuntimeError, fn ->
+      defmodule ErrorM do
+        use Mem,
+          maxmemory_strategy: :unknown
+      end
+    end
+  end
 end
