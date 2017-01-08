@@ -1,11 +1,11 @@
 defmodule Mem do
   defmacro __using__(opts) do
     config = Application.get_env(:mem, __MODULE__, [])
-    worker_number      = opts |> Keyword.get(:worker_number, nil)       || config[:worker_number]      || 2
-    default_ttl        = opts |> Keyword.get(:default_ttl, nil)         || config[:default_ttl]        || nil
-    maxmemory_size     = opts |> Keyword.get(:maxmemory_size, nil)      || config[:maxmemory_size]     || nil
-    maxmemory_strategy = opts |> Keyword.get(:maxmemory_strategy, :lru) || config[:maxmemory_strategy] || :lru
-    persistence        = opts |> Keyword.get(:persistence, false)       || config[:persistence]        || false
+    worker_number      = opts |> Keyword.get(:worker_number)       || config[:worker_number]      || 2
+    default_ttl        = opts |> Keyword.get(:default_ttl)         || config[:default_ttl]        || nil
+    maxmemory_size     = opts |> Keyword.get(:maxmemory_size)      || config[:maxmemory_size]     || nil
+    maxmemory_strategy = opts |> Keyword.get(:maxmemory_strategy)  || config[:maxmemory_strategy] || :lru
+    persistence        = opts |> Keyword.get(:persistence)         || config[:persistence]        || false
     maxmemory_strategy in [:lru, :ttl, :fifo] || raise "unknown maxmemory strategy"
 
     quote do
