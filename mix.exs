@@ -4,7 +4,7 @@ defmodule Mem.Mixfile do
   def project do
     [ app: :mem,
       name: :Mem,
-      version: "0.3.1-dev",
+      version: "0.3.1",
       elixir: "~> 1.2 or ~> 1.3 or ~> 1.4",
       build_embedded: Mix.env == :prod,
       start_permanent: Mix.env == :prod,

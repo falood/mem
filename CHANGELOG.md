@@ -1,6 +1,6 @@
 ## Changelog
 
-## v0.3.1-dev
+## v0.3.1 (2017-01-08)
 * Bugfix:
   * ttl cleaner clean unexpired keys
 
