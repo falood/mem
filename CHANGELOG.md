@@ -1,5 +1,10 @@
 ## Changelog
 
+## v0.2.1-dev
+* Bugfix
+  * fix elixir v1.4.0 warning
+  * use correct name for lru and replacement(out)
+
 ## v0.2.0 (2016-04-01)
 * Enhancements
   * totally rewrite by using heavy macros

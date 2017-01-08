@@ -1,6 +1,6 @@
 # Mem
 
-> KV cache with TTL, LRU and Persistence support
+> KV cache with TTL, Replacement and Persistence support
 
 [![Build Status](https://img.shields.io/travis/falood/mem.svg?style=flat-square)](https://travis-ci.org/falood/mem)
 [![Hex.pm Version](https://img.shields.io/hexpm/v/mem.svg?style=flat-square)](https://hex.pm/packages/mem)
