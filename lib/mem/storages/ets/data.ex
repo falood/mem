@@ -1,4 +1,12 @@
 defmodule Mem.Storages.ETS.Data do
+  @moduledoc """
+  Original Data Storage
+
+  Backend:     ETS
+  Table Type:  set
+  Data Format: {key, value}
+  Index:       key
+  """
 
   defmacro __using__(_) do
     quote do

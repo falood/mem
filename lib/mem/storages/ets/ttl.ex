@@ -1,4 +1,12 @@
 defmodule Mem.Storages.ETS.TTL do
+  @moduledoc """
+  TTL Storage
+
+  Backend:     ETS
+  Table Type:  set
+  Data Format: {key, ttl}
+  Index:       key
+  """
 
   defmacro __using__(_) do
     quote do
